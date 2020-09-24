@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+  <!--arg name="world"  default="one_table"/-->
+  <arg name="world_name" value="one_table"/>
+  <arg name="public_sim" default="true"/>
+  <arg name="robot"  default="titanium"/>
+
+  <!-- start up world -->
+  <include file="$(find tiago_gazebo)/launch/tiago_gazebo.launch">
+    <arg name="world" value="$(arg world_name)"/>
+    <arg name="public_sim" value="$(arg public_sim)"/>
+    <arg name="robot" value="$(arg robot)"/>
+  </include>
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find zz_env_simulation)/config/tiago_rviz.rviz"/>
+
+
+</launch>

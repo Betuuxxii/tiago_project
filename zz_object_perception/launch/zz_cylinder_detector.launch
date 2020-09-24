@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="rate"   default="1"/>
+  <arg name="cloud"  default="/cluster_0"/>
+
+  <node name="zz_cylinder_detector" pkg="zz_object_perception" type="zz_cylinder_detector" output="screen">
+    <remap from="cloud" to="$(arg cloud)"/>
+    <param name="rate"  type="double" value="$(arg rate)"/>
+  </node>
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find tiago_pcl_tutorial)/config/pcl_cylinder.rviz"/>
+</launch>
+
