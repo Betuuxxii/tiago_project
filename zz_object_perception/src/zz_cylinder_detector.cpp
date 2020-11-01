@@ -258,7 +258,7 @@ void CylinderDetector::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& clo
   bool found = pal::cylinderSegmentation<pcl::PointXYZRGB>(pclCloud,
                                                            pclCylinderCloud,
                                                            10,
-                                                           0.01, 0.04,
+                                                           0.025, 0.035,
                                                            cylinderCoefficients);
 
   //filter outliers in the cylinder cloud
@@ -312,9 +312,7 @@ void CylinderDetector::publishPose(const geometry_msgs::Pose& pose,
     static tf::TransformBroadcaster br;
     tf::Transform transform;
     transform.setOrigin( tf::Vector3(poseMsg.pose.position.x, poseMsg.pose.position.y, poseMsg.pose.position.z) );
-    //tf::Quaternion q(poseMsg.pose.orientation.x, poseMsg.pose.orientation.y, poseMsg.pose.orientation.z, poseMsg.pose.orientation.w);
-    tf::Quaternion q(-0.646,0.696,-0.229,0.213);
-    //q.setRPY(0, 0, centroid[3]);
+    tf::Quaternion q(poseMsg.pose.orientation.x, poseMsg.pose.orientation.y, poseMsg.pose.orientation.z, poseMsg.pose.orientation.w);
     transform.setRotation(q);
     br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "xtion_optical_frame", "cluster_link"));
 

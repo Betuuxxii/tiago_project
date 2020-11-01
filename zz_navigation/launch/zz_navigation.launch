@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+  <arg name="public_sim"   default="true"/>
+  
+  <arg name="planner"        default="base"/>
+  <arg name="global_planner" default="global_planner"/>
+  <arg name="local_planner"  default="$(eval 'teb' if arg('public_sim') else 'pal')"/>
+  <arg name="mapping"        default="$(eval 'gmapping' if arg('public_sim') else 'karto')"/>
+
+  <arg name="rgbd_sensors"   default="false"/>
+
+  <arg name="sim_sufix" value="_public_sim"     if="$(arg public_sim)"/>
+
+  <env name="PAL_HOST" value="tiago" />
+
+    <include file="$(find zz_navigation)/launch/navigation.launch">
+      <!--arg name="state"          value="mapping"/-->
+      <arg name="state"          value="localization"/>
+      <arg name="mapping"        value="$(arg mapping)"/>
+      <arg name="planner"        value="$(arg planner)"/>
+      <arg name="global_planner" value="$(arg global_planner)"/>
+      <arg name="local_planner"  value="$(arg local_planner)"/>
+      <arg name="public_sim"     value="$(arg public_sim)"/>
+    </include>
+
+
+  <node pkg="map_server" type="map_server" name="map_server_node" args="$(find zz_navigation)/map/map.yaml"/>
+
+ <include file="$(find gmapping)/launch/slam_gmapping_pr2.launch"></include>
+
+  <!-- pointcloud to laserscan-->
+    <include file="$(find tiago_laser_sensors)/launch/rgbd_cloud_laser.launch">
+      <arg name="cloud" value="/xtion/depth_registered/points"/>
+    </include>
+
+</launch>

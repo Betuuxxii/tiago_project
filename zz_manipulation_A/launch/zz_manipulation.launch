@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- Load definition of pregrasp motion into play_motion namespace -->
+  <rosparam command="load" file="$(find zz_manipulation_A)/config/manipulation_motions.yaml" /> 
+
+  <!-- Pick & place server -->
+  <node name="zz_move_arm" pkg="zz_manipulation_A" type="zz_move_arm" output="screen">
+  </node>
+
+</launch>

@@ -60,6 +60,7 @@ typedef pcl::visualization::PointCloudColorHandlerCustom<PointNT> ColorHandlerT;
 sensor_msgs::PointCloud2::Ptr original_cloud (new sensor_msgs::PointCloud2);
 sensor_msgs::PointCloud2::Ptr voxel_cloud (new sensor_msgs::PointCloud2);
 sensor_msgs::PointCloud2::Ptr passthrough_cloud (new sensor_msgs::PointCloud2);
+sensor_msgs::PointCloud2::Ptr env_objects_cloud (new sensor_msgs::PointCloud2);
 sensor_msgs::PointCloud2::Ptr segmentation_cloud (new sensor_msgs::PointCloud2);
 sensor_msgs::PointCloud2::Ptr cluster_cloud (new sensor_msgs::PointCloud2);
 
@@ -160,6 +161,8 @@ void callback(const PointCloud::ConstPtr& msg)
     ROS_WARN_STREAM("Could not estimate a planar model for the given dataset.");
   }
 
+  pcl::toROSMsg(*cropped_cloud, *env_objects_cloud);
+
 //Extreure la taula del point cloud
   pcl::ExtractIndices<pcl::PointXYZ> extract;
   extract.setInputCloud(cropped_cloud);
@@ -169,7 +172,7 @@ void callback(const PointCloud::ConstPtr& msg)
   //Get the points associated with the planar surface
   extract.filter(*cloud_plane);
   //ROS_INFO_STREAM("PointCloud representing the planar component: " << cloud_plane->points.size() << "data points.");
-
+  pcl::toROSMsg(*cloud_plane, *env_objects_cloud);
 //Remove the planar inliers, extract the rest
   extract.setNegative(true);
   extract.filter(*cloud_f);
@@ -240,7 +243,7 @@ void callback(const PointCloud::ConstPtr& msg)
 
         //cylinderDetector(cluster_pose_temp, cloud_filtered, j);
 
-/*      static tf::TransformBroadcaster br;
+/*    static tf::TransformBroadcaster br;
       tf::Transform transform;
       transform.setOrigin( tf::Vector3(cluster_pose_temp.pose.position.x, cluster_pose_temp.pose.position.y, cluster_pose_temp.pose.position.z) );
       tf::Quaternion q;
@@ -275,6 +278,8 @@ int main(int argc, char** argv)
   //passthrough publisher
   //ros::Publisher pub_passthrough = nh.advertise<PointCloud>("passthrough_filter", 1);
   //segmentation publisher
+  ros::Publisher pub_env_obj = nh.advertise<PointCloud>("/env_objects_cloud", 1);
+  //segmentation publisher
   ros::Publisher pub_segmentation = nh.advertise<PointCloud>("/segmentation_cloud", 1);
   //pubCyl = nh.advertise<visualization_msgs::Marker> ("/marker", 1);
 
@@ -291,6 +296,9 @@ int main(int argc, char** argv)
 
     //Publish the processed point cloud by the passthrough filter
     //pub_passthrough.publish(passthrough_cloud);
+
+    //Publish the processed point cloud by the passthrough filter
+    pub_env_obj.publish(env_objects_cloud);
     
     //Publish the processed point cloud by the plane segmentation
     pub_segmentation.publish(segmentation_cloud);
