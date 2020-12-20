@@ -5,7 +5,7 @@
 
   <arg name="planner"        default="base"/>
   <arg name="global_planner" default="global_planner"/>
-  <arg name="local_planner"  default="pal"/>
+  <arg name="local_planner"  default="teb"/>
   <arg name="localization"   default="amcl"/>
   <arg name="mapping"        default="karto"/>
   <arg name="octomap"        default="false"/>
@@ -32,7 +32,7 @@
   </include>
 
   <!-- Planning -->
-  <include file="$(find tiago_2dnav)/launch/move_$(arg planner).launch">
+  <include file="$(find tiago_2dnav)/launch/move_base.launch">
     <arg name="global_planner" value="$(arg global_planner)"/>
     <arg name="local_planner"  value="$(arg local_planner)"/>
     <arg name="public_sim"     value="$(arg public_sim)"/>

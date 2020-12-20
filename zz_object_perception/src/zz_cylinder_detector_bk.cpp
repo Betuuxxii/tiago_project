@@ -258,7 +258,7 @@ void CylinderDetector::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& clo
   bool found = pal::cylinderSegmentation<pcl::PointXYZRGB>(pclCloud,
                                                            pclCylinderCloud,
                                                            10,
-                                                           0.015, 0.040,
+                                                           0.025, 0.035,
                                                            cylinderCoefficients);
 
   //filter outliers in the cylinder cloud

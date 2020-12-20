@@ -41,8 +41,6 @@
 #include <pcl/registration/gicp.h>
 
 #include <visualization_msgs/Marker.h>
-#include<std_msgs/Bool.h>
-
 
 std::vector<ros::Publisher> pub_cluster_vec;
 std::vector<ros::Publisher> pub_cluster_pose;
@@ -68,13 +66,11 @@ sensor_msgs::PointCloud2::Ptr cluster_cloud (new sensor_msgs::PointCloud2);
 
 std::vector<sensor_msgs::PointCloud2::Ptr> pc2_clusters;
 
-
-std_msgs::Bool enabled;
-
+bool enabled = false;
 
 void callback(const PointCloud::ConstPtr& msg)
 {
- if(enabled.data == true){
+
   time_t tstart, tend; 
   tstart = time(0);
 
@@ -106,11 +102,11 @@ void callback(const PointCloud::ConstPtr& msg)
   ROS_INFO_STREAM("DownSampled scene cloud with " << cloud_voxel_filtered->size() << "points");
 
 
-  pcl::toROSMsg(*cloud_voxel_filtered, *voxel_cloud);
+ /* pcl::toROSMsg(*cloud_voxel_filtered, *voxel_cloud);
   voxel_cloud->header.frame_id = world_frame;
   voxel_cloud->header.stamp = ros::Time::now();
   ROS_INFO_STREAM("DownSampled scene cloud with " << cloud_voxel_filtered->size() << "points");
-
+*/
   //passthrough filter
   pcl::PointCloud<pcl::PointXYZ> yf_cloud, zf_cloud;
 
@@ -126,7 +122,7 @@ void callback(const PointCloud::ConstPtr& msg)
   pcl::PassThrough<pcl::PointXYZ> pass_y;
   pass_y.setInputCloud(cloud_voxel_filtered);
   pass_y.setFilterFieldName("y");
-  pass_y.setFilterLimits(-0.3,0.4);
+  pass_y.setFilterLimits(-0.4,0.5);
   pass_y.filter(yf_cloud);
 
     //filter in z
@@ -137,11 +133,11 @@ void callback(const PointCloud::ConstPtr& msg)
   pass_z.setFilterLimits(0.0,1.0);
   pass_z.filter(zf_cloud);
 
-  ROS_INFO_STREAM("DownSampled Passthrough filter with "<<zf_cloud.size()<<" points");
+/*  ROS_INFO_STREAM("DownSampled Passthrough filter with "<<zf_cloud.size()<<" points");
   pcl::toROSMsg(zf_cloud, *passthrough_cloud);
   passthrough_cloud->header.frame_id = world_frame;
   passthrough_cloud->header.stamp = ros::Time::now();
-
+*/
   //PLANE SEGMENTATION
   //  Definició variables per filtrar
   pcl::PointCloud<pcl::PointXYZ>::Ptr cropped_cloud(new pcl::PointCloud<pcl::PointXYZ>(zf_cloud));
@@ -265,12 +261,11 @@ void callback(const PointCloud::ConstPtr& msg)
       pub_cluster_vec[j].publish(tempROSMsg);
       ++j;
   }
-}
+
 }
 
-void callback_enable(std_msgs::Bool bool_msgs){
+void callback_enable(bool enabled){
 
-enabled.data = bool_msgs.data;
 }
 
 
@@ -281,15 +276,15 @@ int main(int argc, char** argv)
 
   //Subscribe to the kinect point cloud topic
   ros::Subscriber sub = nh.subscribe<PointCloud>("/xtion/depth_registered/points", 1, callback);
-  ros::Subscriber sub_enable = nh.subscribe<std_msgs::Bool>("/enable_manipulation", 1, callback_enable);
+  ros::Subscriber sub_enable = nh.subscribe<bool>("/enable_manipulation", 1, callback_enable);
 
 
   //Create a ROS publisher for the output point cloud
   //ros::Publisher pub_original = nh.advertise<PointCloud>("original_cloud", 1);
   //voxel publisher
-  ros::Publisher pub_voxel = nh.advertise<PointCloud>("voxel_filter", 1);
+  //ros::Publisher pub_voxel = nh.advertise<PointCloud>("voxel_filter", 1);
   //passthrough publisher
-  ros::Publisher pub_passthrough = nh.advertise<PointCloud>("passthrough_filter", 1);
+  //ros::Publisher pub_passthrough = nh.advertise<PointCloud>("passthrough_filter", 1);
   //segmentation publisher
   ros::Publisher pub_env_obj = nh.advertise<PointCloud>("/env_objects_cloud", 1);
   //segmentation publisher
@@ -299,18 +294,16 @@ int main(int argc, char** argv)
 
   ros::Rate loop_rate(10);
 
-  enabled.data = false;
-
   while(ros::ok())
   {
     //Publish the original point cloud
     //pub_original.publish(original_cloud);
 
     //Publish the processed point cloud by the voxel filter
-    pub_voxel.publish(voxel_cloud);
+    //pub_voxel.publish(voxel_cloud);
 
     //Publish the processed point cloud by the passthrough filter
-    pub_passthrough.publish(passthrough_cloud);
+    //pub_passthrough.publish(passthrough_cloud);
 
     //Publish the processed point cloud by the passthrough filter
     pub_env_obj.publish(env_objects_cloud);
