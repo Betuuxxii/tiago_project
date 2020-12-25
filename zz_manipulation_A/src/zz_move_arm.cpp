@@ -140,6 +140,14 @@ void takeObject(geometry_msgs::PoseStamped object_pose){
      if (!bool(e)){
           ROS_ERROR("Error executing plan");
 
+          //intent n2
+          ros::Duration(1).sleep();
+          ROS_INFO("Intent n2....");
+          group_arm_torso.setPlanningTime(3.0);
+          bool success2 = bool(group_arm_torso.plan(my_plan));
+          ros::Time start = ros::Time::now();
+          moveit::planning_interface::MoveItErrorCode e = group_arm_torso.move();
+
         }
         else{
         move_success = true;
@@ -150,9 +158,7 @@ void takeObject(geometry_msgs::PoseStamped object_pose){
     catch (...){
     ROS_ERROR("Error executing plan");
 
-    //intent n2
-    ros::Duration(1).sleep();
-    moveit::planning_interface::MoveItErrorCode e = group_arm_torso.move();
+
 
     move_success = true;
     }
@@ -226,6 +232,15 @@ void goToObject(geometry_msgs::PoseStamped object_pose, float x, float y, float 
       moveit::planning_interface::MoveItErrorCode e = group_arm_torso.move();
      if (!bool(e)){
           ROS_ERROR("Error executing plan");
+
+          ROS_INFO("Intent n2....");
+          //intent n2
+          ros::Duration(1).sleep();
+          group_arm_torso.setPlanningTime(3.0);
+          bool success2 = bool(group_arm_torso.plan(my_plan));
+          ros::Time start = ros::Time::now();
+          moveit::planning_interface::MoveItErrorCode e = group_arm_torso.move();
+
         }
         else{
         //move_success = true;
@@ -236,10 +251,7 @@ void goToObject(geometry_msgs::PoseStamped object_pose, float x, float y, float 
     catch (...){
     ROS_ERROR("Error executing plan");
 
-    //intent n2
-    ros::Duration(1).sleep();
-    moveit::planning_interface::MoveItErrorCode e = group_arm_torso.move();
-
+    
     move_success = true;
     }
 
