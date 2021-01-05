@@ -1,4 +1,8 @@
-/*
+/**********************************************************
+  Basat en tiago_tutorials - PAL Robotics
+
+  *********************************************************
+
  * Software License Agreement (Modified BSD License)
  *
  *  Copyright (c) 2016, PAL Robotics, S.L.
@@ -32,7 +36,6 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \author Jordi Pages. */
 
 // PAL headers
 #include <zz_object_perception/pcl_filters.hpp>
