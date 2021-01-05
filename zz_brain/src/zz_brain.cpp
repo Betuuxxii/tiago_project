@@ -23,7 +23,7 @@ nav_msgs::GetPlan srv;
 move_base_msgs::MoveBaseActionFeedback feedback_;
 actionlib_msgs::GoalID goalid;
 
-std_msgs::Bool has_command, enable_manipulation;
+std_msgs::Bool has_command, enable_manipulation, without;
 
 geometry_msgs::PoseStamped tableA, tableB, tableC, pacient1, pacient2, centre;
 
@@ -47,7 +47,7 @@ void initialize_var(){
 
     tableC.header.frame_id = "map";
     tableC.header.stamp = ros::Time::now();
-    tableC.pose.position.x = 6.65;
+    tableC.pose.position.x = 6.68;//6.65;
     tableC.pose.position.y = 1.85;
     tableC.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(0,0,0);
 
@@ -196,6 +196,7 @@ main (int argc, char** argv)
         if(enable_manipulation.data == false){
 
             if(count == 0){
+                without.data = false;
                 // clear coastmap
                 std_srvs::Empty emptymsg;
                 ros::service::call("/move_base/clear_costmaps",emptymsg);
@@ -216,16 +217,23 @@ main (int argc, char** argv)
                     break;
                     default:
                     ROS_INFO("Sense medicament");
+                    without.data = true;
                     break;
                 }
 
-                enable_manipulation.data = true;
-                pub_enable_manipulation.publish(enable_manipulation);
-                ros::Duration(1.0);
+                if (without.data == false){
+                    enable_manipulation.data = true;
+                    pub_enable_manipulation.publish(enable_manipulation);
+                    ros::Duration(1.0);
+                    
+                }
                 count ++;
-                
+                    
             }
             else if (count == 1){
+
+                without.data = false;
+
                 // clear coastmap
                 std_srvs::Empty emptymsg;
                 ros::service::call("/move_base/clear_costmaps",emptymsg);
@@ -247,15 +255,22 @@ main (int argc, char** argv)
                     break;
                     default:
                     ROS_INFO("Sense medicament");
+                    without.data = true;
                     break;
                 }
                 
-                enable_manipulation.data = true;
-                pub_enable_manipulation.publish(enable_manipulation);
-                ros::Duration(1.0);
+                if (without.data == false){
+                    enable_manipulation.data = true;
+                    pub_enable_manipulation.publish(enable_manipulation);
+                    ros::Duration(1.0);
+                    
+                }
                 count ++;
                             }
             else if (count == 2){
+
+                without.data = false;
+
                 // clear coastmap
                 std_srvs::Empty emptymsg;
                 ros::service::call("/move_base/clear_costmaps",emptymsg);
@@ -277,12 +292,16 @@ main (int argc, char** argv)
                     break;
                     default:
                     ROS_INFO("Sense medicament");
-                    break;
+                    without.data = true;
+                   break;
                 }
 
-                enable_manipulation.data = true;
-                pub_enable_manipulation.publish(enable_manipulation);
-                ros::Duration(1.0);
+                if (without.data == false){
+                    enable_manipulation.data = true;
+                    pub_enable_manipulation.publish(enable_manipulation);
+                    ros::Duration(1.0);
+                    
+                }
                 count ++;
 
             }
