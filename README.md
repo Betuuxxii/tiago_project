@@ -1,6 +1,6 @@
 TFM
 #         TIAGO PROJECT 
-#TIAGo - Manipulador mòbil col·laboratiu
+# TIAGo - Manipulador mòbil col·laboratiu
 **Elisabet Puigdesens Casals**
 
 ----------------------------------------------------------------------------------
